@@ -1,5 +1,5 @@
 
-import apa102
+from .apa102 import APA102
 import time
 import threading
 from gpiozero import LED
@@ -8,18 +8,23 @@ try:
 except ImportError:
     import Queue as Queue
 
-from alexa_led_pattern import AlexaLedPattern
+from .alexa_led_pattern import AlexaLedPattern
 
 #install numpy to use GoogleHomeLedPattern
-#from google_home_led_pattern import GoogleHomeLedPattern
+from .google_home_led_pattern import GoogleHomeLedPattern
 
 class Pixels:
     PIXELS_N = 12
 
-    def __init__(self, pattern=AlexaLedPattern):
+    def __init__(self, LED_pattern="alexa_pattern"):
+        if (LED_pattern == "alexa_pattern"):
+            pattern = AlexaLedPattern
+        elif (LED_pattern == "google_home"):
+            pattern = GoogleHomeLedPattern
+
         self.pattern = pattern(show=self.show)
 
-        self.dev = apa102.APA102(num_led=self.PIXELS_N)
+        self.dev = APA102(num_led=self.PIXELS_N)
         
         self.power = LED(5)
         self.power.on()
@@ -72,10 +77,10 @@ class Pixels:
         self.dev.show()
 
 
-pixels = Pixels()
 
 
 if __name__ == '__main__':
+    pixels = Pixels()
     while True:
 
         try:
